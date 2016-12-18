@@ -203,26 +203,12 @@ class RSA:
 #   then returns a list of the last X primes
 #
 
-'''
-key = GenerateRSA(1000,100)
-print("Public Key =", key.public)
-print("Private Key =", key.private)
-secure = RSA(key.public, key.private)
-print(secure.encrypt("ZIZY MACK"))
-'''
-
-secure = RSA(None,[423853, 850441])
-print(secure.decrypt([769715, 236168, 769715, 498592, 520419, 184163, 380665, 288383, 329917]))
-
-                          
-'''
 print(key.encrypt_int(encrypted))
 print(key.decrypt_int(encrypted))
 
-string = key.encrypt_string("This is a secure line bitch")
+string = key.encrypt_string("This is secure")
 print(string)
 print(key.decrypt_string(string))
-'''
 
 
 
