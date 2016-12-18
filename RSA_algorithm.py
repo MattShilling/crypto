@@ -2,13 +2,15 @@ import math
 from random import *
 import time
 
-
+# START THE CLOCK!
 start_time = time.time()
 
+#   /   /   /   /   /   /   /   /   /   /   
 #
 #   Finds a list of primes within the LIMIT
 #   then returns a list of the last X primes
 #
+#   Thanks to Glenn Maynard
 def primes_sieve(limit, x):
     limitn = limit+1
 
@@ -18,7 +20,7 @@ def primes_sieve(limit, x):
     for i in range(2, limitn):
         if not_prime[i]:
             continue
-        for f in range(i*2, limitn, i):
+        for f in range(i*i, limitn, i):
             not_prime[f] = True
 
         primes.append(i)
