@@ -104,9 +104,9 @@ def find_d(e, totient):
 
 ##  /  /   /   /   /   /   /   /   /   /   /   /   /   /
 ##  CLASS:
-##  GenerateRSA
-##  
-class GenerateRSA:
+##  GenerateKey
+##  generates an RSA key
+class GenerateKey:
 
     # needs better arguments
     def __init__(self, prime_range, top_sift):
@@ -140,48 +140,30 @@ class GenerateRSA:
         print("totient = ", self.totient)
         print("e = ", self.e)
         print("d = ", self.d)
+        #
 
         self.public = [self.e, self.n]
         self.private = [self.d, self.n]
-    
-
-    def encrypt_int(self,m):
-        return pow(m, self.e) % self.n
-
-    def decrypt_int(self,c):
-        return pow(c, self.d) % self.n
-
-    def encrypt_string(self, string):
-        result = []
-    
-        for char in string:
-            result.append(self.encrypt_int(ord(char)))
-
-        return result
-                          
-
-    def decrypt_string(self, data):
-        result = []
-
-        for var in data:
-            result.append(chr(self.decrypt_int(var)))
-
-        return ''.join(result)
-
-    
-
+        
+##  /  /   /   /   /   /   /   /   /   /   /   /   /   /
+##  CLASS:
+##  RSA
+##  encrypt and decrypt functions with private/public key
 class RSA:
     
     def __init__(self, public, private):
         self.public = public
         self.private = private
     
+    # encrypt an integer
     def en_int(self,message):
         return pow(message, self.public[0]) % self.public[1]
-
+    
+    # decrypt an integer
     def de_int(self,crypt):
         return pow(crypt, self.private[0]) % self.private[1]
-
+    
+    # decrypt a string
     def encrypt(self, string):
         result = []
     
@@ -190,7 +172,6 @@ class RSA:
 
         return result
                           
-
     def decrypt(self, data):
         result = []
 
@@ -205,16 +186,16 @@ class RSA:
 #   then returns a list of the last X primes
 #
 
-print(key.encrypt_int(encrypted))
-print(key.decrypt_int(encrypted))
+key = GenerateKey(1000,100)
+print("Public Key =", key.public)
+print("Private Key =", key.private)
+secure = RSA(key.public, key.private)
+crypt = secure.encrypt("ZIZY MACK")
+print (crypt)
+print (secure.decrypt(crypt))
 
-string = key.encrypt_string("This is secure")
-print(string)
-print(key.decrypt_string(string))
-
-
-
-print("--- %s seconds ---" % (time.time() - start_time))
+# How long did this take?
+print("--- Your task took %s seconds ---" % (time.time() - start_time))
 
 
 
