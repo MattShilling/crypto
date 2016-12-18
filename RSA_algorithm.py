@@ -27,10 +27,9 @@ def primes_sieve(limit, x):
 
     return primes[start:limitn]
 
-
+#   /   /   /   /   /   /   /   /   /   /   /
 #
 #   picks x amount of random values in a list
-#
 def pick_primes(primes, x):
     picks = []
 
@@ -41,37 +40,45 @@ def pick_primes(primes, x):
 
     return picks
 
+#   /   /   /   /   /   /   /   /   /
 #
 #   picks one random value in a list
-#
 def pick_prime(primes):
-
     return primes[randint(0, len(primes)-1)]
 
 
+#   /   /   /   /   /   /   /   /   /   
+#
+#   checks if two numbers are coprime
 def check_coprime(a,b):
     while b: #while b != 0
         a,b = b, a%b
 
     return a == 1
 
+
+#   /   /   /   /   /   /   /   /   /   
+#
+#   finds the 1st private key value, e
 def find_e(totient):
     
     coprimes = []
     i = 2
-
+    
+    # makes a list of coprimes between 1 and the totient
     while i < totient:
         if(check_coprime(i,totient)):
             coprimes.append(i)
         
         i += 1
-
+    
+    # return a randomly selected coprime
     return pick_prime(coprimes)
 
+#   /   /   /   /   /   /   /   /   /   /   /   /     
 #
 #   inverse modulus function, thx to Mart Bakhoff
-#
-# returns (g, x, y) a*x + b*y = gcd(x, y)
+#   returns (g, x, y) a*x + b*y = gcd(x, y)
 def egcd(a, b):
     if a == 0:
         return (b, 0, 1)
@@ -84,26 +91,19 @@ def mod_inv(b, n):
     g, x, _ = egcd(b, n)
     if g == 1:
         return x % n
-
-
     
-
+#   /   /   /   /   /   /   /   /   /   /
+#
+#   finds the 1st private key value, d
 def find_d(e, totient):
 
     return mod_inv(e,totient)
-    '''
-    d = 0
-    while ((d * e) % totient) != 1:
-        print((d * e) % totient)
-        d += 1
-
-    return d
-    '''
 
 
-##
-## RSA
-##
+##  /  /   /   /   /   /   /   /   /   /   /   /   /   /
+##  CLASS:
+##  GenerateRSA
+##  
 class GenerateRSA:
 
     # needs better arguments
