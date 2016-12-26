@@ -221,15 +221,13 @@ start_time = time.time()
 # process will take, however, the encryption will be stronger
 key = GenerateKey(1000,100)
 print("Public Key =", key.public)
-print("Private Key =", key.private)
+print("Private Key =", key.private, "\n")
 secure = RSA(key.public, key.private)
 crypt = secure.encrypt("This is a secure message")
-print (crypt)
-print (secure.decrypt(crypt))
+print ("The encrypted message:")
+print (crypt, "\n")
+print ("The decrypted message:")
+print (secure.decrypt(crypt), "\n")
 
 # How long did this take?
-print("--- Your task took %s seconds ---" % (time.time() - start_time))
-
-
-
-
+print("--- This took %s seconds ---" % (time.time() - start_time))
