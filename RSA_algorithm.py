@@ -2,9 +2,6 @@ import math
 from random import *
 import time
 
-# START THE CLOCK!
-start_time = time.time()
-
 #   /   /   /   /   /   /   /   /   /   /   
 #
 #   Finds a list of primes within the LIMIT
@@ -88,48 +85,56 @@ def egcd(a, b):
         g, x, y = egcd(b % a, a)
         return (g, y - (b // a) * x, x)
     
-# x = mulinv(b) mod n, (x * b) % n == 1
+# x = mod_inv(b) mod n, (x * b) % n == 1
 def mod_inv(b, n):
     g, x, _ = egcd(b, n)
     if g == 1:
         return x % n
+
     
 #   /   /   /   /   /   /   /   /   /   /
 #
 #   finds the 1st private key value, d
+#	by calculating d = mod_inv(e) mod totient(n)
 def find_d(e, totient):
 
     return mod_inv(e,totient)
 
 
 ##  /  /   /   /   /   /   /   /   /   /   /   /   /   /
-##  CLASS:
-##  GenerateKey
-##  generates an RSA key
+##
+##  CLASS: GenerateKey
+##
+##  generates an RSA key by selecting two random primes, p and q, from the
+## 	range, "prime_range," while only considering the last "last_primes."
+##	Then, n is calculated by multiplying them together. Next, a totient(n) is 	
+##	calculated from: (p-1)*(q-1). Now, e is found by chosing a number that
+##	satisfies 1 < e < totient(n) AND is also coprime to n. Finally, d is found 
+##	by solving (d * e) % totient(n) = 1
+##
+##	the public key consists of e,n
+##	the private key consists of d,n
 class GenerateKey:
 
-    # needs better arguments
-    def __init__(self, prime_range, top_sift):
+    def __init__(self, prime_range, last_primes):
         self.prime_range = prime_range
-        self.top_sift = top_sift
+        self.last_primes = last_primes
 
         print("Picking 2 primes between 1 and ", prime_range)
-        print("Only chooses from the last ",top_sift, " prime numers in the range")
+        print("Only chooses from the last ",last_primes, " prime numers in the range")
 
         self.d = None
         
         while self.d is None:
-            # find these primes!
-            self.primes =  primes_sieve(prime_range,top_sift)
-
+            # find those primes!
+            self.primes =  primes_sieve(prime_range,last_primes)
+			
+			# calculates p,q,b,totient(n),e, and d
             self.p = pick_prime(self.primes)
             self.q = pick_prime(self.primes)
             self.n = self.p * self.q
             self.totient = (self.p-1)*(self.q-1)
-
-
             self.e = find_e(self.totient)
-
             #uses Extended Euclidean algorithm
             self.d = find_d(self.e, self.totient)
 
@@ -141,40 +146,61 @@ class GenerateKey:
         print("e = ", self.e)
         print("d = ", self.d)
         #
-
+		
+		# assigns the private and public key pairs
         self.public = [self.e, self.n]
         self.private = [self.d, self.n]
+
         
 ##  /  /   /   /   /   /   /   /   /   /   /   /   /   /
-##  CLASS:
-##  RSA
+##
+##  CLASS: RSA
+##
 ##  encrypt and decrypt functions with private/public key
 class RSA:
     
+	# gets the public and private variables 
+	# which are each stored as a pair of integers
+	# in an array
+	#
+	# public[0]  = e | public[1]  = n
+	# private[0] = d | private[1] = n
+	#
     def __init__(self, public, private):
+
         self.public = public
-        self.private = private
+		# uses the python naming convention for a private variable
+        self.__private = private
     
     # encrypt an integer
+	# (x ^ e) % n
     def en_int(self,message):
         return pow(message, self.public[0]) % self.public[1]
     
     # decrypt an integer
+	# (x ^ d) % n
     def de_int(self,crypt):
-        return pow(crypt, self.private[0]) % self.private[1]
+        return pow(crypt, self.__private[0]) % self.__private[1]
     
-    # decrypt a string
+    # encrypt a string
     def encrypt(self, string):
         result = []
-    
+
+    	# turns each character into its ascii value,
+		# then uses en_int() to encrypt it and appends
+		# it to result
         for char in string:
             result.append(self.en_int(ord(char)))
 
         return result
-                          
+           
+	# decrypt a string             
     def decrypt(self, data):
         result = []
 
+		# takes in an array of integers that was encrypted,
+		# decrypts them with de_int, turns it into a char and
+		# appends it to result
         for var in data:
             result.append(chr(self.de_int(var)))
 
@@ -182,15 +208,22 @@ class RSA:
 
 
 #
-#   Finds a list of primes within the LIMIT
-#   then returns a list of the last X primes
+# MAIN PROCESS
 #
+# Generates a key pair using two random primes from 900 - 1000
+# then prints the encrypted message -> "This is a secure message"
+# Next, decrypts the message and prints it to the console
 
+# START THE CLOCK!
+start_time = time.time()
+
+# the larger the range for the primes, the longer this whole
+# process will take, however, the encryption will be stronger
 key = GenerateKey(1000,100)
 print("Public Key =", key.public)
 print("Private Key =", key.private)
 secure = RSA(key.public, key.private)
-crypt = secure.encrypt("ZIZY MACK")
+crypt = secure.encrypt("This is a secure message")
 print (crypt)
 print (secure.decrypt(crypt))
 
